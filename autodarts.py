@@ -50,11 +50,34 @@ class AutodartsClient:
         self.access_token = tokens.get('access_token')
         self.refresh_token = tokens.get('refresh_token')
         self.token_expiry = tokens.get('token_expiry', 0)
+
+    def refresh_access_token(self):
+        """Refreshes the access token using the refresh token."""
+        if not self.refresh_token:
+            return self.login()
+
+        payload = {
+            'grant_type': 'refresh_token',
+            'refresh_token': self.refresh_token,
+            'client_id': self.client_id,
+            'client_secret': self.client_secret,
+        }
+        response = requests.post(self.AUTH_URL, data=payload)
+        
+        if response.status_code == 200:
+            data = response.json()
+            self.access_token = data['access_token']
+            self.refresh_token = data.get('refresh_token', self.refresh_token) # Keep old one if not provided
+            self.token_expiry = time.time() + data['expires_in']
+            return data
+        else:
+            # If refresh fails, fall back to a full login
+            return self.login()
  
     def _get_headers(self):
         """Ensures token is valid and returns authorization headers."""
         if time.time() >= self.token_expiry:
-            self.login()
+            self.refresh_access_token()
         return {'Authorization': f'Bearer {self.access_token}'}
 
     # --- API Actions ---

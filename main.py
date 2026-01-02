@@ -39,16 +39,16 @@ if __name__ == "__main__":
         client.load_tokens(saved_tokens)
 
     try:
-        # Check if we need to login (no token or expired)
-        if client.access_token is None or time.time() >= client.token_expiry:
-            print("Logging in...")
+        # Check if we have a token, if not, login and save it
+        if client.access_token is None:
+            print("No token found, logging in...")
             new_tokens = client.login()
             save_tokens(new_tokens)
-            print("Successfully logged in.")
+            print("Successfully logged in and tokens saved.")
         else:
-            print("Using loaded tokens.")
+            print("Loaded tokens from file.")
 
-        # 1. Get active matches
+        # 1. Get active matches (token will be refreshed automatically if needed)
         matches = client.get_match_state("019b7f2c-3b22-79ca-bdba-612e51e57146")
         if matches:
             print(f"Tracking Match: {matches}")
