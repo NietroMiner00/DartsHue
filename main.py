@@ -1,7 +1,7 @@
 import json
 import os
 import time
-from autodarts import AutodartsClient, AutodartsChannels as Channels
+from autodarts import AutodartsClient, Channels, BoardEvents
 from dotenv import load_dotenv
 
 TOKEN_FILE = 'autodarts_tokens.json'
@@ -32,6 +32,22 @@ def handle_live_data(data):
         if throws:
             last_throw = throws[-1]
             print(f"🎯 Dart Thrown: {last_throw['segment']['name']} (Points: {event_data['turns'][0]['points']})")
+    
+    # Filter for Board Channel
+    if data.get('channel') == Channels.BOARDS:
+        board_status = event_data.get('event')
+
+        if board_status == BoardEvents.TAKEOUT_STARTED:
+            print("🚨 Status: Player is pulling darts. DO NOT THROW!")
+        
+        elif board_status == BoardEvents.TAKEOUT_FINISHED:
+            print("✅ Status: Board is clear. READY TO THROW.")
+
+        elif board_status == BoardEvents.CALIBRATION_STARTED:
+            print("⚙️ Status: Board is calibrating...")
+
+        elif board_status == BoardEvents.BOARD_STARTED:
+            print("🚀 Status: Detection engine is online.")
 
 # Usage Example
 if __name__ == "__main__":

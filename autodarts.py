@@ -164,7 +164,7 @@ class AutodartsClient:
         # Give the connection a moment to open
         time.sleep(2)
 
-class AutodartsChannels:
+class Channels:
     """Available WebSocket Channels"""
     MATCHES = "autodarts.matches"
     BOARDS = "autodarts.boards"
@@ -190,3 +190,13 @@ class AutodartsChannels:
     def user_events(user_id):
         """Topic for personal user notifications and lobby invites"""
         return f"{user_id}.events"
+    
+class BoardEvents:
+    """Standard event strings sent by the board topic"""
+    TAKEOUT_STARTED = "Takeout started"
+    TAKEOUT_FINISHED = "Takeout finished"
+    CALIBRATION_STARTED = "Calibration started"
+    CALIBRATION_FINISHED = "Calibration finished"
+    BOARD_STOPPED = "Stopped"
+    BOARD_STARTED = "Started"
+    MANUAL_RESET = "Manual reset"
