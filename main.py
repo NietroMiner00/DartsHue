@@ -1,7 +1,7 @@
 import json
 import os
 import time
-from autodarts import AutodartsClient
+from autodarts import AutodartsClient, AutodartsChannels as Channels
 
 TOKEN_FILE = 'autodarts_tokens.json'
 
@@ -65,7 +65,7 @@ if __name__ == "__main__":
         if True:#matches:
             match_id = "019b7f5d-5a5c-787e-93ab-9cae6b62ea22"#matches[0]['id']
             # 3. Subscribe to the state of this match
-            client.subscribe("autodarts.matches", f"{match_id}.state")
+            client.subscribe(Channels.MATCHES, Channels.match_state(match_id))
         else:
             print("No running matches!")
         

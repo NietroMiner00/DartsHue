@@ -158,3 +158,30 @@ class AutodartsClient:
         wst.start()
         # Give the connection a moment to open
         time.sleep(2)
+
+class AutodartsChannels:
+    """Available WebSocket Channels"""
+    MATCHES = "autodarts.matches"
+    BOARDS = "autodarts.boards"
+    LOBBIES = "autodarts.lobbies"
+    USERS = "autodarts.users"
+
+    @staticmethod
+    def match_state(match_id):
+        """Topic for full match state updates"""
+        return f"{match_id}.state"
+
+    @staticmethod
+    def board_matches(board_id):
+        """Topic for match start/stop events on a specific board"""
+        return f"{board_id}.matches"
+
+    @staticmethod
+    def board_events(board_id):
+        """Topic for physical board events (Takeout, Calibration)"""
+        return f"{board_id}.events"
+
+    @staticmethod
+    def user_events(user_id):
+        """Topic for personal user notifications and lobby invites"""
+        return f"{user_id}.events"
