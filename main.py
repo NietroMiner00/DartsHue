@@ -3,6 +3,7 @@ import os
 import time
 from autodarts import AutodartsClient, Channels, BoardEvents
 from dotenv import load_dotenv
+from python_hue_v2 import Hue
 
 TOKEN_FILE = 'autodarts_tokens.json'
 
@@ -39,19 +40,26 @@ def handle_live_data(data):
 
         if board_status == BoardEvents.TAKEOUT_STARTED:
             print("🚨 Status: Player is pulling darts. DO NOT THROW!")
+            hue.lights[light_id].color_xy = {'x': 0.4913, 'y': 0.4587}
         
         elif board_status == BoardEvents.TAKEOUT_FINISHED:
             print("✅ Status: Board is clear. READY TO THROW.")
+            hue.lights[light_id].color_xy = {'x': 0.2695, 'y': 0.6253}
 
         elif board_status == BoardEvents.CALIBRATION_STARTED:
             print("⚙️ Status: Board is calibrating...")
+            hue.lights[light_id].color_xy = {'x': 0.6904, 'y': 0.3078}
 
         elif board_status == BoardEvents.BOARD_STARTED:
             print("🚀 Status: Detection engine is online.")
+            hue.lights[light_id].color_xy = {'x': 0.2695, 'y': 0.6253}
 
 # Usage Example
 if __name__ == "__main__":
     load_dotenv()
+    hue = Hue(os.getenv("HUE_BRIDGE_IP"), os.getenv("HUE_USER_TOKEN"))
+    bridge = hue.bridge
+    light_id = int(os.getenv("HUE_LIGHT_ID"))
     
     # Creds from env file
     client = AutodartsClient(
@@ -87,8 +95,8 @@ if __name__ == "__main__":
 
         # 2. Find a match to listen to
         matches = client.get_matches()
-        if matches:
-            match_id = matches[0]['id']
+        if True:#matches:
+            match_id = "019b7fc6-aae1-7a27-9584-70ffb4479727"#matches[0]['id']
             # 3. Subscribe to the state of this match
             client.subscribe(Channels.MATCHES, Channels.match_state(match_id))
         else:
