@@ -127,10 +127,10 @@ class AutodartsClient:
         res = requests.get(f"{self.BASE_URL_BS}/boards/", headers=self._get_headers())
         return res.json()
 
-    def get_board_ip(self, board_id):
-        """Retrieves the local IP address for a specific board."""
+    def get_board(self, board_id):
+        """Retrieves the specific board."""
         res = requests.get(f"{self.BASE_URL_BS}/boards/{board_id}", headers=self._get_headers())
-        return res.json().get('ip')
+        return res.json()
     
     # --- WebSocket Logic ---
 
