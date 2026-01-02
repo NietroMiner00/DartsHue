@@ -2,6 +2,7 @@ import json
 import os
 import time
 from autodarts import AutodartsClient, AutodartsChannels as Channels
+from dotenv import load_dotenv
 
 TOKEN_FILE = 'autodarts_tokens.json'
 
@@ -33,13 +34,14 @@ def handle_live_data(data):
 
 # Usage Example
 if __name__ == "__main__":
-    # In a real app, load these from config
+    load_dotenv()
     
+    # Creds from env file
     client = AutodartsClient(
-        email="yourmail",
-        password="yourpassword",
-        client_id="yourclientid",
-        client_secret="yourclientsecret"
+        email=os.getenv("AUTODARTS_EMAIL"),
+        password=os.getenv("AUTODARTS_PASSWORD"),
+        client_id=os.getenv("AUTODARTS_CLIENT_ID"),
+        client_secret=os.getenv("AUTODARTS_CLIENT_SECRET")
     )
 
     # Try to load existing tokens

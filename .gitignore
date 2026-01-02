@@ -1,4 +1,6 @@
 __pycache__/
 
+.env
+
 autodarts_tokens.json
 autodarts-caller-legacy.py
