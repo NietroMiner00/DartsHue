@@ -1,6 +1,8 @@
 import requests
 import json
 import time
+import threading
+import websocket
 
 class AutodartsClient:
     """
@@ -18,11 +20,13 @@ class AutodartsClient:
         self.BASE_URL_GS = "https://api.autodarts.io/gs/v0"
         self.BASE_URL_AS = "https://api.autodarts.io/as/v0"
         self.BASE_URL_BS = "https://api.autodarts.io/bs/v0"
+        self.WS_URL = "wss://api.autodarts.io/ms/v0/subscribe"
 
         # Token Management
         self.access_token = None
         self.refresh_token = None
         self.token_expiry = 0
+        self.ws = None
 
     # --- Authentication Logic ---
 
@@ -122,3 +126,35 @@ class AutodartsClient:
         """Retrieves the local IP address for a specific board."""
         res = requests.get(f"{self.BASE_URL_BS}/boards/{board_id}", headers=self._get_headers())
         return res.json().get('ip')
+    
+    # --- WebSocket Logic ---
+
+    def subscribe(self, channel, topic):
+        """Subscribes to a specific channel (e.g., 'autodarts.matches') and topic (match ID)."""
+        if self.ws and self.ws.sock and self.ws.sock.connected:
+            params = {
+                "type": "subscribe",
+                "channel": channel,
+                "topic": topic
+            }
+            self.ws.send(json.dumps(params))
+            print(f"Subscribed to {channel} -> {topic}")
+
+    def start_websocket(self, on_message_callback):
+        """Starts the WebSocket in a separate background thread."""
+        def run():
+            self.ws = websocket.WebSocketApp(
+                self.WS_URL,
+                header=self._get_headers(),
+                on_message=lambda ws, msg: on_message_callback(json.loads(msg)),
+                on_error=lambda ws, err: print(f"WS Error: {err}"),
+                on_close=lambda ws, close_code, close_msg: print("WS Closed"),
+                on_open=lambda ws: print("WS Connection Opened")
+            )
+            self.ws.run_forever()
+
+        wst = threading.Thread(target=run)
+        wst.daemon = True
+        wst.start()
+        # Give the connection a moment to open
+        time.sleep(2)

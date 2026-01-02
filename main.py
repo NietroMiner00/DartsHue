@@ -22,6 +22,15 @@ def save_tokens(tokens):
     except Exception as e:
         print(f"Error saving tokens: {e}")
 
+def handle_live_data(data):
+    """Callback function that prints data whenever a dart is thrown."""
+    event_data = data.get('data', {})
+    if 'turns' in event_data:
+        throws = event_data['turns'][0].get('throws', [])
+        if throws:
+            last_throw = throws[-1]
+            print(f"🎯 Dart Thrown: {last_throw['segment']['name']} (Points: {event_data['turns'][0]['points']})")
+
 # Usage Example
 if __name__ == "__main__":
     # In a real app, load these from config
@@ -48,12 +57,24 @@ if __name__ == "__main__":
         else:
             print("Loaded tokens from file.")
 
-        # 1. Get active matches (token will be refreshed automatically if needed)
-        matches = client.get_match_state("019b7f2c-3b22-79ca-bdba-612e51e57146")
-        if matches:
-            print(f"Tracking Match: {matches}")
+        # 1. Start the background listener
+        client.start_websocket(on_message_callback=handle_live_data)
+
+        # 2. Find a match to listen to
+        matches = client.get_matches()
+        if True:#matches:
+            match_id = "019b7f5d-5a5c-787e-93ab-9cae6b62ea22"#matches[0]['id']
+            # 3. Subscribe to the state of this match
+            client.subscribe("autodarts.matches", f"{match_id}.state")
         else:
             print("No running matches!")
+        
+        # Keep the main thread alive
+        try:
+            while True:
+                time.sleep(1)
+        except KeyboardInterrupt:
+            print("Exiting...")
 
     except Exception as e:
         print(f"API Error: {e}")
