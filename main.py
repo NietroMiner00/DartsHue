@@ -1,8 +1,31 @@
+import json
+import os
+import time
 from autodarts import AutodartsClient
+
+TOKEN_FILE = 'autodarts_tokens.json'
+
+def load_tokens():
+    if os.path.exists(TOKEN_FILE):
+        try:
+            with open(TOKEN_FILE, 'r') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Error loading tokens: {e}")
+    return None
+
+def save_tokens(tokens):
+    try:
+        with open(TOKEN_FILE, 'w') as f:
+            json.dump(tokens, f, indent=4)
+        print(f"Tokens saved to {TOKEN_FILE}")
+    except Exception as e:
+        print(f"Error saving tokens: {e}")
 
 # Usage Example
 if __name__ == "__main__":
     # In a real app, load these from config
+    
     client = AutodartsClient(
         email="yourmail",
         password="yourpassword",
@@ -10,22 +33,27 @@ if __name__ == "__main__":
         client_secret="yourclientsecret"
     )
 
+    # Try to load existing tokens
+    saved_tokens = load_tokens()
+    if saved_tokens:
+        client.load_tokens(saved_tokens)
+
     try:
-        client.login()
-        print("Successfully logged in.")
+        # Check if we need to login (no token or expired)
+        if client.access_token is None or time.time() >= client.token_expiry:
+            print("Logging in...")
+            new_tokens = client.login()
+            save_tokens(new_tokens)
+            print("Successfully logged in.")
+        else:
+            print("Using loaded tokens.")
 
         # 1. Get active matches
-        matches = client.get_matches()
+        matches = client.get_match_state("019b7f2c-3b22-79ca-bdba-612e51e57146")
         if matches:
-            first_match_id = matches[0]['id']
-            print(f"Tracking Match: {first_match_id}")
-
-            # 2. Trigger next player
-            client.next_player(first_match_id)
-            
-        # 3. Get user stats
-        stats = client.get_user_stats("some-user-uuid")
-        print(f"Player Average: {stats.get('average', {}).get('average')}")
+            print(f"Tracking Match: {matches}")
+        else:
+            print("No running matches!")
 
     except Exception as e:
         print(f"API Error: {e}")

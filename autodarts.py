@@ -43,8 +43,14 @@ class AutodartsClient:
         self.access_token = data['access_token']
         self.refresh_token = data.get('refresh_token')
         self.token_expiry = time.time() + data['expires_in']
-        return True
+        return data
 
+    def load_tokens(self, tokens):
+        """Loads authentication tokens into the client."""
+        self.access_token = tokens.get('access_token')
+        self.refresh_token = tokens.get('refresh_token')
+        self.token_expiry = tokens.get('token_expiry', 0)
+ 
     def _get_headers(self):
         """Ensures token is valid and returns authorization headers."""
         if time.time() >= self.token_expiry:
