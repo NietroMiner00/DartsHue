@@ -25,6 +25,7 @@ def save_tokens(tokens):
 
 def handle_live_data(data):
     """Callback function that prints data whenever a dart is thrown."""
+    print(data)
     event_data = data.get('data', {})
     if 'turns' in event_data:
         throws = event_data['turns'][0].get('throws', [])
@@ -62,10 +63,16 @@ if __name__ == "__main__":
         # 1. Start the background listener
         client.start_websocket(on_message_callback=handle_live_data)
 
+        boards = client.get_boards()
+        board = None
+        if boards:
+            board = boards[0]
+            client.subscribe(Channels.BOARDS, Channels.board_events(board["id"]))
+
         # 2. Find a match to listen to
         matches = client.get_matches()
-        if True:#matches:
-            match_id = "019b7f5d-5a5c-787e-93ab-9cae6b62ea22"#matches[0]['id']
+        if matches:
+            match_id = matches[0]['id']
             # 3. Subscribe to the state of this match
             client.subscribe(Channels.MATCHES, Channels.match_state(match_id))
         else:

@@ -121,6 +121,11 @@ class AutodartsClient:
         url = f"{self.BASE_URL_AS}/users/{user_id}/stats/{variant}?limit={limit}"
         res = requests.get(url, headers=self._get_headers())
         return res.json()
+    
+    def get_boards(self):
+        """Retrieves the local IP address for a specific board."""
+        res = requests.get(f"{self.BASE_URL_BS}/boards/", headers=self._get_headers())
+        return res.json()
 
     def get_board_ip(self, board_id):
         """Retrieves the local IP address for a specific board."""
