@@ -1,0 +1,11 @@
+[project]
+name = "dartshue"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "dotenv>=0.9.9",
+    "python-hue-v2>=2.2.1",
+    "websocket-client>=1.9.0",
+]
