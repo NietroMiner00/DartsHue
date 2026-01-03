@@ -46,6 +46,17 @@ def handle_live_data(data):
         elif board_status == BoardEvents.TAKEOUT_FINISHED:
             print("✅ Status: Board is clear. READY TO THROW.")
             hue.lights[light_id].color_xy = {'x': 0.2695, 'y': 0.6253}
+            url = f"http://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
+    
+            # Payload for White:
+            # 'mirek' 153 is Cool (6500K), 500 is Warm (2000K)
+            payload = {
+                "on": True,
+                "bri": 254,  # Max brightness (0-254)
+                "ct": 250    # Neutral white (~4000K)
+            }
+            
+            response = requests.put(url, json=payload)
 
         elif board_status == BoardEvents.CALIBRATION_STARTED:
             print("⚙️ Status: Board is calibrating...")
@@ -84,6 +95,17 @@ def handle_live_data(data):
         elif board_status == BoardEvents.MANUAL_RESET:
             print("🚀 Status: Manual reset.")
             hue.lights[light_id].color_xy = {'x': 0.2695, 'y': 0.6253}
+            url = f"http://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
+    
+            # Payload for White:
+            # 'mirek' 153 is Cool (6500K), 500 is Warm (2000K)
+            payload = {
+                "on": True,
+                "bri": 254,  # Max brightness (0-254)
+                "ct": 250    # Neutral white (~4000K)
+            }
+            
+            response = requests.put(url, json=payload)
 
         elif board_status == "Throw detected":
             print("🎯 Throw detected.")
@@ -97,8 +119,42 @@ def handle_live_data(data):
             if data.get("throwNumber") == 1:
                 dart_sum = 0
             dart_sum += number * multiplier
-            if dart_sum >= 60:
-                pass
+            if dart_sum == 180:
+                url = f"http://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
+    
+                # Payload for White:
+                # 'mirek' 153 is Cool (6500K), 500 is Warm (2000K)
+                payload = {
+                    "on": True,
+                    "bri": 254,  # Max brightness (0-254)
+                    "xy": [0.2695, 0.6253]    # Neutral white (~4000K)
+                }
+                
+                response = requests.put(url, json=payload)
+            elif dart_sum >= 100:
+                url = f"http://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
+    
+                # Payload for White:
+                # 'mirek' 153 is Cool (6500K), 500 is Warm (2000K)
+                payload = {
+                    "on": True,
+                    "bri": 254,  # Max brightness (0-254)
+                    "xy": [0.3114, 0.1242]    # Neutral white (~4000K)
+                }
+                
+                response = requests.put(url, json=payload)
+            elif dart_sum >= 60:
+                url = f"http://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
+    
+                # Payload for White:
+                # 'mirek' 153 is Cool (6500K), 500 is Warm (2000K)
+                payload = {
+                    "on": True,
+                    "bri": 254,  # Max brightness (0-254)
+                    "xy": [0.1532, 0.0485]    # Neutral white (~4000K)
+                }
+                
+                response = requests.put(url, json=payload)
                 
 
 # Usage Example
