@@ -4,6 +4,7 @@ import time
 from autodarts import AutodartsClient, Channels, BoardEvents
 from dotenv import load_dotenv
 from python_hue_v2 import Hue
+import requests
 
 TOKEN_FILE = 'autodarts_tokens.json'
 
@@ -57,10 +58,27 @@ def handle_live_data(data):
         elif board_status == BoardEvents.BOARD_STOPPED:
             print("🚀 Status: Detection engine is offline.")
             hue.lights[light_id].color_xy = {'x': 0.6904, 'y': 0.3078}
+            hue.lights[light_id2].color_xy = {'x': 0.6904, 'y': 0.3078}
 
         elif board_status == BoardEvents.MANUAL_RESET:
             print("🚀 Status: Manual reset.")
             hue.lights[light_id].color_xy = {'x': 0.2695, 'y': 0.6253}
+
+        elif board_status == "Throw detected":
+            print("🎯 Throw detected.")
+            segment = event_data.get("segment")
+            multiplier = int(segment.get("multiplier"))
+            number = int(segment.get("number"))
+                
+            if data.get("throwNumber") == 3:
+                hue.lights[light_id].color_xy = {'x': 0.4913, 'y': 0.4587}
+                
+            if data.get("throwNumber") == 1:
+                dart_sum = 0
+            dart_sum += number * multiplier
+            if dart_sum >= 60:
+                pass
+                
 
 # Usage Example
 if __name__ == "__main__":
@@ -68,6 +86,22 @@ if __name__ == "__main__":
     hue = Hue(os.getenv("HUE_BRIDGE_IP"), os.getenv("HUE_USER_TOKEN"))
     bridge = hue.bridge
     light_id = int(os.getenv("HUE_LIGHT_ID"))
+    light_id2 = int(os.getenv("HUE_LIGHT_ID2"))
+    darts_sum = 0
+
+    hue.lights[light_id].color_xy = {'x': 0.2695, 'y': 0.6253}
+    
+    url = f"https://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
+    
+    # Payload for White:
+    # 'mirek' 153 is Cool (6500K), 500 is Warm (2000K)
+    payload = {
+        "on": True,
+        "bri": 254,  # Max brightness (0-254)
+        "ct": 250    # Neutral white (~4000K)
+    }
+    
+    response = requests.put(url, json=payload)
     
     # Creds from env file
     client = AutodartsClient(
