@@ -58,7 +58,17 @@ def handle_live_data(data):
         elif board_status == BoardEvents.BOARD_STOPPED:
             print("🚀 Status: Detection engine is offline.")
             hue.lights[light_id].color_xy = {'x': 0.6904, 'y': 0.3078}
-            hue.lights[light_id2].color_xy = {'x': 0.6904, 'y': 0.3078}
+            url = f"http://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
+    
+            # Payload for White:
+            # 'mirek' 153 is Cool (6500K), 500 is Warm (2000K)
+            payload = {
+                "on": True,
+                "bri": 254,  # Max brightness (0-254)
+                "xy": [0.2695, 0.6253]    # Neutral white (~4000K)
+            }
+            
+            response = requests.put(url, json=payload)
 
         elif board_status == BoardEvents.MANUAL_RESET:
             print("🚀 Status: Manual reset.")
