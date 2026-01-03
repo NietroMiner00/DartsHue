@@ -99,7 +99,7 @@ if __name__ == "__main__":
     light_id2 = int(os.getenv("HUE_LIGHT_ID2"))
     darts_sum = 0
 
-    hue.lights[light_id].color_xy = {'x': 0.2695, 'y': 0.6253}
+    hue.lights[light_id].color_xy = {'x': 0.6904, 'y': 0.3078}
     
     url = f"http://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
     
