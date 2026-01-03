@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
     hue.lights[light_id].color_xy = {'x': 0.2695, 'y': 0.6253}
     
-    url = f"https://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
+    url = f"http://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
     
     # Payload for White:
     # 'mirek' 153 is Cool (6500K), 500 is Warm (2000K)
