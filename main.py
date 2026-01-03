@@ -112,49 +112,50 @@ def handle_live_data(data):
             segment = event_data.get("throw").get("segment")
             multiplier = int(segment.get("multiplier"))
             number = int(segment.get("number"))
+            global darts_sum
+            throwNumber = event_data.get("throwNumber")
                 
-            if event_data.get("throwNumber") == 3:
-                hue.lights[light_id].color_xy = {'x': 0.4913, 'y': 0.4587}
-                
-            if event_data.get("throwNumber") == 1:
+            if throwNumber == 1:
                 darts_sum = 0
             darts_sum += number * multiplier
-            if darts_sum == 180:
-                url = f"http://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
-    
-                # Payload for White:
-                # 'mirek' 153 is Cool (6500K), 500 is Warm (2000K)
-                payload = {
-                    "on": True,
-                    "bri": 254,  # Max brightness (0-254)
-                    "xy": [0.2695, 0.6253]    # Neutral white (~4000K)
-                }
-                
-                response = requests.put(url, json=payload)
-            elif darts_sum >= 100:
-                url = f"http://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
-    
-                # Payload for White:
-                # 'mirek' 153 is Cool (6500K), 500 is Warm (2000K)
-                payload = {
-                    "on": True,
-                    "bri": 254,  # Max brightness (0-254)
-                    "xy": [0.3114, 0.1242]    # Neutral white (~4000K)
-                }
-                
-                response = requests.put(url, json=payload)
-            elif darts_sum >= 60:
-                url = f"http://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
-    
-                # Payload for White:
-                # 'mirek' 153 is Cool (6500K), 500 is Warm (2000K)
-                payload = {
-                    "on": True,
-                    "bri": 254,  # Max brightness (0-254)
-                    "xy": [0.1532, 0.0485]    # Neutral white (~4000K)
-                }
-                
-                response = requests.put(url, json=payload)
+            if throwNumber == 3:
+                hue.lights[light_id].color_xy = {'x': 0.4913, 'y': 0.4587}
+                if darts_sum == 180:
+                    url = f"http://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
+        
+                    # Payload for White:
+                    # 'mirek' 153 is Cool (6500K), 500 is Warm (2000K)
+                    payload = {
+                        "on": True,
+                        "bri": 254,  # Max brightness (0-254)
+                        "xy": [0.2695, 0.6253]    # Neutral white (~4000K)
+                    }
+                    
+                    response = requests.put(url, json=payload)
+                elif darts_sum >= 100:
+                    url = f"http://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
+        
+                    # Payload for White:
+                    # 'mirek' 153 is Cool (6500K), 500 is Warm (2000K)
+                    payload = {
+                        "on": True,
+                        "bri": 254,  # Max brightness (0-254)
+                        "xy": [0.3114, 0.1242]    # Neutral white (~4000K)
+                    }
+                    
+                    response = requests.put(url, json=payload)
+                elif darts_sum >= 60:
+                    url = f"http://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
+        
+                    # Payload for White:
+                    # 'mirek' 153 is Cool (6500K), 500 is Warm (2000K)
+                    payload = {
+                        "on": True,
+                        "bri": 254,  # Max brightness (0-254)
+                        "xy": [0.1532, 0.0485]    # Neutral white (~4000K)
+                    }
+                    
+                    response = requests.put(url, json=payload)
                 
 
 # Usage Example
