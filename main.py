@@ -53,6 +53,10 @@ def handle_live_data(data):
         elif board_status == BoardEvents.BOARD_STARTED:
             print("🚀 Status: Detection engine is online.")
             hue.lights[light_id].color_xy = {'x': 0.2695, 'y': 0.6253}
+            
+        elif board_status == BoardEvents.BOARD_STOPPED:
+            print("🚀 Status: Detection engine is offline.")
+            hue.lights[light_id].color_xy = {'x': 0.6904, 'y': 0.3078}
 
         elif board_status == BoardEvents.MANUAL_RESET:
             print("🚀 Status: Manual reset.")
