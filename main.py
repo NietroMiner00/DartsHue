@@ -109,14 +109,14 @@ def handle_live_data(data):
 
         elif board_status == "Throw detected":
             print("🎯 Throw detected.")
-            segment = event_data.get("segment")
+            segment = event_data.get("throw").get("segment")
             multiplier = int(segment.get("multiplier"))
             number = int(segment.get("number"))
                 
-            if data.get("throwNumber") == 3:
+            if event_data.get("throwNumber") == 3:
                 hue.lights[light_id].color_xy = {'x': 0.4913, 'y': 0.4587}
                 
-            if data.get("throwNumber") == 1:
+            if event_data.get("throwNumber") == 1:
                 dart_sum = 0
             dart_sum += number * multiplier
             if dart_sum == 180:
