@@ -79,6 +79,22 @@ def handle_live_data(data):
             print("⚙️ Status: Board is calibrating...")
             hue.lights[light_id].color_xy = {'x': 0.6904, 'y': 0.3078}
 
+        
+        elif board_status == BoardEvents.CALIBRATION_FINISHED:
+            print("⚙️ Status: Calibration finished...")
+            hue.lights[light_id].color_xy = {'x': 0.2695, 'y': 0.6253}
+            url = f"http://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
+    
+            # Payload for White:
+            # 'mirek' 153 is Cool (6500K), 500 is Warm (2000K)
+            payload = {
+                "on": True,
+                "bri": 254,  # Max brightness (0-254)
+                "ct": 250    # Neutral white (~4000K)
+            }
+            
+            response = requests.put(url, json=payload)
+
         elif board_status == BoardEvents.BOARD_STARTED:
             print("🚀 Status: Detection engine is online.")
             hue.lights[light_id].color_xy = {'x': 0.2695, 'y': 0.6253}
