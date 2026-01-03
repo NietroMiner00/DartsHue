@@ -36,7 +36,7 @@ def handle_live_data(data):
             print(f"🎯 Dart Thrown: {last_throw['segment']['name']} (Points: {event_data['turns'][0]['points']})")
 
     if data.get('channel') == Channels.MATCHES:
-        finished = event_data.get("finished")
+        finished = event_data.get("gameFinished")
         if finished:
             url = f"http://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
         
@@ -64,7 +64,7 @@ def handle_live_data(data):
                 }
                 
                 response = requests.put(url, json=payload)
-                
+
                 time.sleep(0.5)
     
     # Filter for Board Channel
