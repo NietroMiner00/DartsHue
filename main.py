@@ -235,7 +235,7 @@ if __name__ == "__main__":
             if boards:
                 board = boards[0]
                 client.subscribe(Channels.BOARDS, Channels.board_events(board["id"]))
-                client.subscribe(Channels.BOARDS, f"{board['id']}.matches"))
+                client.subscribe(Channels.BOARDS, f"{board['id']}.matches")
 
             # 2. Find a match to listen to
             matches = client.get_matches()
