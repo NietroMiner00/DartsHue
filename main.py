@@ -39,7 +39,24 @@ def handle_live_data(data):
     if data.get('channel') == Channels.BOARDS:
         board_status = event_data.get('event')
 
-        if board_status == BoardEvents.TAKEOUT_STARTED:
+        if board_status == "start":
+            print("🚀 Status: Match started")
+            match_id = event_data.get("id")
+            client.subscribe(Channels.MATCHES, Channels.match_state(match_id))
+            
+            hue.lights[light_id].color_xy = {'x': 0.2695, 'y': 0.6253}
+            url = f"http://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
+    
+            # Payload for White:
+            # 'mirek' 153 is Cool (6500K), 500 is Warm (2000K)
+            payload = {
+                "on": True,
+                "bri": 254,  # Max brightness (0-254)
+                "ct": 250    # Neutral white (~4000K)
+            }
+            
+            response = requests.put(url, json=payload)
+        elif board_status == BoardEvents.TAKEOUT_STARTED:
             print("🚨 Status: Player is pulling darts. DO NOT THROW!")
             hue.lights[light_id].color_xy = {'x': 0.4913, 'y': 0.4587}
         
@@ -221,8 +238,8 @@ if __name__ == "__main__":
 
             # 2. Find a match to listen to
             matches = client.get_matches()
-            if True:#matches:
-                match_id = "019b7fc6-aae1-7a27-9584-70ffb4479727"#matches[0]['id']
+            if matches:
+                match_id = matches[0]['id']
                 # 3. Subscribe to the state of this match
                 client.subscribe(Channels.MATCHES, Channels.match_state(match_id))
             else:
