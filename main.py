@@ -84,30 +84,40 @@ if __name__ == "__main__":
         else:
             print("Loaded tokens from file.")
 
-        # 1. Start the background listener
-        client.start_websocket(on_message_callback=handle_live_data)
+        # Reconnection Loop if websockets disconnect
+        while True:
+            # 1. Start the background listener
+            client.start_websocket(on_message_callback=handle_live_data)
 
-        boards = client.get_boards()
-        board = None
-        if boards:
-            board = boards[0]
-            client.subscribe(Channels.BOARDS, Channels.board_events(board["id"]))
+            # Wait for websocket connection
+            while not client.ws_is_connected():
+                pass
 
-        # 2. Find a match to listen to
-        matches = client.get_matches()
-        if True:#matches:
-            match_id = "019b7fc6-aae1-7a27-9584-70ffb4479727"#matches[0]['id']
-            # 3. Subscribe to the state of this match
-            client.subscribe(Channels.MATCHES, Channels.match_state(match_id))
-        else:
-            print("No running matches!")
-        
-        # Keep the main thread alive
-        try:
-            while True:
-                time.sleep(1)
-        except KeyboardInterrupt:
-            print("Exiting...")
+            boards = client.get_boards()
+            board = None
+            if boards:
+                board = boards[0]
+                client.subscribe(Channels.BOARDS, Channels.board_events(board["id"]))
+
+            # 2. Find a match to listen to
+            matches = client.get_matches()
+            if True:#matches:
+                match_id = "019b7fc6-aae1-7a27-9584-70ffb4479727"#matches[0]['id']
+                # 3. Subscribe to the state of this match
+                client.subscribe(Channels.MATCHES, Channels.match_state(match_id))
+            else:
+                print("No running matches!")
+            
+            # Keep the main thread alive
+            try:
+                while True:
+                    time.sleep(1)
+
+                    if not client.ws_is_connected():
+                        break
+            except KeyboardInterrupt:
+                print("Exiting...")
+                break
 
     except Exception as e:
         print(f"API Error: {e}")

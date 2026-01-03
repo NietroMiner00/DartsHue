@@ -145,6 +145,9 @@ class AutodartsClient:
             self.ws.send(json.dumps(params))
             print(f"Subscribed to {channel} -> {topic}")
 
+    def ws_is_connected(self):
+        return self.ws and self.ws.sock and self.ws.sock.connected
+
     def start_websocket(self, on_message_callback):
         """Starts the WebSocket in a separate background thread."""
         def run():
@@ -161,8 +164,6 @@ class AutodartsClient:
         wst = threading.Thread(target=run)
         wst.daemon = True
         wst.start()
-        # Give the connection a moment to open
-        time.sleep(2)
 
 class Channels:
     """Available WebSocket Channels"""
