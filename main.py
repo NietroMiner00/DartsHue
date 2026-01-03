@@ -179,6 +179,19 @@ def handle_live_data(data):
             number = int(segment.get("number"))
             global darts_sum
             throwNumber = event_data.get("throwNumber")
+
+            if segment.get("name") == "Miss":
+                url = f"http://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
+    
+                # Payload for White:
+                # 'mirek' 153 is Cool (6500K), 500 is Warm (2000K)
+                payload = {
+                    "on": True,
+                    "bri": 254,  # Max brightness (0-254)
+                    "xy": [0.6904, 0.3078]    # Neutral white (~4000K)
+                }
+                
+                response = requests.put(url, json=payload)
                 
             if throwNumber == 1:
                 darts_sum = 0
