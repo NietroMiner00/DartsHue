@@ -34,6 +34,38 @@ def handle_live_data(data):
         if throws:
             last_throw = throws[-1]
             print(f"🎯 Dart Thrown: {last_throw['segment']['name']} (Points: {event_data['turns'][0]['points']})")
+
+    if data.get('channel') == Channels.MATCHES:
+        finished = event_data.get("finished")
+        if finished:
+            url = f"http://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
+        
+            # Payload for White:
+            # 'mirek' 153 is Cool (6500K), 500 is Warm (2000K)
+            payload = {
+                "on": True,
+                "bri": 254,  # Max brightness (0-254)
+                "xy": [0.2695, 0.6253]    # Neutral white (~4000K)
+            }
+            
+            response = requests.put(url, json=payload)
+
+            for i in range(20):
+                payload = {
+                    "on": False
+                }
+                
+                response = requests.put(url, json=payload)
+
+                time.sleep(0.5)
+
+                payload = {
+                    "on": True
+                }
+                
+                response = requests.put(url, json=payload)
+                
+                time.sleep(0.5)
     
     # Filter for Board Channel
     if data.get('channel') == Channels.BOARDS:
