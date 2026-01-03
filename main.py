@@ -117,9 +117,9 @@ def handle_live_data(data):
                 hue.lights[light_id].color_xy = {'x': 0.4913, 'y': 0.4587}
                 
             if event_data.get("throwNumber") == 1:
-                dart_sum = 0
-            dart_sum += number * multiplier
-            if dart_sum == 180:
+                darts_sum = 0
+            darts_sum += number * multiplier
+            if darts_sum == 180:
                 url = f"http://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
     
                 # Payload for White:
@@ -131,7 +131,7 @@ def handle_live_data(data):
                 }
                 
                 response = requests.put(url, json=payload)
-            elif dart_sum >= 100:
+            elif darts_sum >= 100:
                 url = f"http://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
     
                 # Payload for White:
@@ -143,7 +143,7 @@ def handle_live_data(data):
                 }
                 
                 response = requests.put(url, json=payload)
-            elif dart_sum >= 60:
+            elif darts_sum >= 60:
                 url = f"http://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
     
                 # Payload for White:
