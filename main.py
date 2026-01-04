@@ -180,7 +180,7 @@ def handle_live_data(data):
             global darts_sum
             throwNumber = event_data.get("throwNumber")
 
-            if segment.get("name") == "Miss":
+            if segment.get("name") == "Miss" or event_data.get("turnBusted"):
                 url = f"http://{os.getenv("HUE_BRIDGE_IP")}/api/{os.getenv("HUE_USER_TOKEN")}/lights/{light_id2}/state"
     
                 # Payload for White:
